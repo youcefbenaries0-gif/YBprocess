@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مساعد مهندس العمليات</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap">
+<style>
+:root{--bg:#edf0f1;--card:#fff;--ink:#14202b;--mut:#5d6b76;--line:#d5dce0;--acc:#0f6b7a;--onacc:#fff;--ok:#2f7d4f;--mid:#b7791f;--bad:#c0322a;--sh:rgba(20,32,43,.35)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111a21;--card:#1a252e;--ink:#e8eef2;--mut:#93a3af;--line:#2d3b46;--acc:#4fb8c9;--onacc:#06222a;--ok:#5fbf86;--mid:#e0a84a;--bad:#f2766b;--sh:rgba(0,0,0,.6)}}
+:root[data-theme="dark"]{--bg:#111a21;--card:#1a252e;--ink:#e8eef2;--mut:#93a3af;--line:#2d3b46;--acc:#4fb8c9;--onacc:#06222a;--ok:#5fbf86;--mid:#e0a84a;--bad:#f2766b;--sh:rgba(0,0,0,.6)}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.6 "IBM Plex Sans Arabic","Segoe UI",Tahoma,system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+main{max-width:640px;margin:0 auto;padding:20px 16px 120px}
+h1{font-size:28px;line-height:1.2;margin:8px 0 2px;font-weight:700}
+#sub{margin:0 0 16px;color:var(--mut);font-size:15px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;margin-bottom:4px}
+.chip{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 14px;font:inherit;font-size:14px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:var(--onacc)}
+.card{display:flex;gap:12px;width:100%;text-align:start;background:var(--card);border:1px solid var(--line);border-inline-start:6px solid var(--mut);border-radius:6px;padding:12px;margin-bottom:10px;color:inherit;font:inherit;cursor:pointer}
+.card.l{border-inline-start-color:var(--ok)}.card.m{border-inline-start-color:var(--mid)}.card.h{border-inline-start-color:var(--bad)}
+.card.c{opacity:.6}
+.th{flex:none;width:64px;height:64px;border-radius:4px;background:var(--line);object-fit:cover}
+.card b{display:block;font-weight:700;line-height:1.35}
+.meta{display:flex;flex-wrap:wrap;gap:2px 12px;color:var(--mut);font-size:13px;margin-top:4px}
+.empty{text-align:center;color:var(--mut);padding:48px 16px}
+.fab{position:fixed;inset-inline-end:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));border:0;background:var(--acc);color:var(--onacc);font:700 16px/1 inherit;font-family:inherit;padding:16px 22px;border-radius:999px;box-shadow:0 6px 18px var(--sh);cursor:pointer}
+.sheet{position:fixed;inset:0;background:var(--sh);display:flex;align-items:flex-end;justify-content:center;z-index:20}
+.sheet[hidden],.lb[hidden]{display:none}
+.panel{background:var(--bg);width:100%;max-width:640px;max-height:92%;overflow-y:auto;border-radius:14px 14px 0 0;padding:20px 16px calc(24px + env(safe-area-inset-bottom,0px));animation:up .18s ease-out}
+@keyframes up{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.panel{animation:none}}
+h2{margin:0 0 14px;font-size:22px}
+label{display:block;font-size:14px;color:var(--mut);margin-bottom:12px}
+input,select,textarea{display:block;width:100%;margin-top:4px;padding:11px 12px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);font:inherit;font-size:16px}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.photos img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;cursor:pointer}
+.btn{display:inline-block;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:15px;padding:11px 16px;border-radius:6px;cursor:pointer;text-align:center}
+.btn.p{background:var(--acc);border-color:var(--acc);color:var(--onacc);font-weight:700}
+.btn.d{color:var(--bad);border-color:var(--bad)}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.bar .btn{flex:1 1 auto}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:12px 0}
+.seg .btn[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.desc{white-space:pre-wrap;margin:8px 0 14px}
+.lb{position:fixed;inset:0;z-index:40;background:#000;display:flex;align-items:center;justify-content:center}
+.lb img{max-width:100%;max-height:100%}
+.toast{position:fixed;inset-inline:0;bottom:calc(84px + env(safe-area-inset-bottom,0px));margin:auto;width:max-content;max-width:90%;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:6px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+.toast.on{opacity:1}
+
+.pick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 16px}
+.pick button{border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:15px;padding:10px 6px;border-radius:6px;cursor:pointer}
+.pick button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:700}
+.nav{position:fixed;inset-inline:0;bottom:0;z-index:10;display:grid;grid-template-columns:repeat(4,1fr);background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.nav button{border:0;border-top:3px solid transparent;background:none;color:var(--mut);font:inherit;font-size:14px;padding:16px 4px;cursor:pointer}
+.nav button[aria-pressed="true"]{color:var(--acc);font-weight:700;border-top-color:var(--acc)}
+section[hidden],.fab[hidden]{display:none}
+.f{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.kpi{display:flex;justify-content:space-between;align-items:baseline;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px;margin-bottom:8px}
+.kpi b{font-size:22px}
+.warn{color:var(--bad);font-size:14px;margin:4px 0 8px}
+.note{color:var(--mut);font-size:13px;margin-top:16px}
+.chk{display:flex;gap:10px;align-items:flex-start;color:var(--ink);font-size:16px;padding:10px 12px;background:var(--card);border:1px solid var(--line);border-radius:6px;margin-bottom:8px}
+.chk input{width:22px;height:22px;margin:2px 0 0;padding:0;flex:none}
+main{padding-bottom:150px}
+.fab{bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+.toast{bottom:calc(140px + env(safe-area-inset-bottom,0px))}
+
+.nav{grid-template-columns:repeat(5,1fr)}
+.nav button{font-size:13px;padding:16px 2px}
+.pr{margin-bottom:14px}
+.pt{display:flex;justify-content:space-between;gap:8px}
+.pb{background:var(--line);height:10px;border-radius:5px;overflow:hidden;margin:4px 0}
+.pb i{display:block;height:100%;background:var(--mut)}
+.pr.v .pb i{background:var(--acc)}
+.pr small{color:var(--mut);font-size:12px}
+.stp{display:flex;gap:10px;margin-bottom:14px}
+.stp .n{flex:none;width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--bg);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:14px}
+.stp>div{flex:1;min-width:0}
+.stp p{margin:2px 0 8px}
+.stp img{max-width:100%;border-radius:6px;cursor:pointer;display:block;margin-bottom:6px}
+#e_st img{max-width:140px}
+#rep{display:none}
+@media print{body>*:not(#rep){display:none!important}body{background:#fff}#rep{display:block;background:#fff;color:#000;font-size:12pt}#rep img{max-width:42%;margin:4px;vertical-align:top}.ri{break-inside:avoid;border-bottom:1px solid #999;padding:8px 0}#rep h1{font-size:20pt}#rep h3{margin:0 0 4px}}
+</style>
+</head>
+<body>
+<main>
+  <h1>مساعد مهندس العمليات</h1>
+  <div class="pick" id="pick"><button data-p="s">نصف آلية</button><button data-p="a">أوتوماتيك</button><button data-p="d">غسالة صحون</button></div>
+  <section id="v_d"><p id="sub"></p><div class="chips" id="chips"></div><div class="bar" style="margin:0 0 12px"><button class="btn" id="x_c">تصدير Excel (CSV)</button><button class="btn" id="x_p">تقرير PDF</button></div><div id="list"></div></section>
+  <section id="v_p" hidden><h2>تحليل Pareto للعيوب</h2><div class="seg" id="p_m"><button class="btn" data-m="s">المحطة</button><button class="btn" data-m="y">النوع</button><button class="btn" data-m="v">الخطورة</button></div><p id="p_s" class="note" style="margin:0 0 12px"></p><div id="p_r"></div></section>
+  <section id="v_i" hidden><h2>تعليمات التجميع</h2><p id="i_s" class="note" style="margin:0 0 12px"></p><button class="btn p" id="i_add" style="width:100%;margin-bottom:12px">تعليمة جديدة</button><div id="i_l"></div></section>
+  <section id="v_o" hidden><h2>حساب TRS / OEE</h2><div class="f"><label>الوقت المخطط (دقيقة)<input id="o_pl" type="number" inputmode="decimal" min="0"></label><label>مجموع التوقفات (دقيقة)<input id="o_st" type="number" inputmode="decimal" min="0"></label><label>زمن الدورة المثالي (ثانية/وحدة)<input id="o_ic" type="number" inputmode="decimal" min="0"></label><label>إجمالي المنتَج (وحدة)<input id="o_tt" type="number" inputmode="decimal" min="0"></label><label>عدد المعيب (وحدة)<input id="o_bd" type="number" inputmode="decimal" min="0"></label></div><div id="o_r"></div></section>
+  <section id="v_t" hidden><h2>Takt time وموازنة الخط</h2><div class="f"><label>الوقت المتاح (دقيقة/وردية)<input id="t_av" type="number" inputmode="decimal" min="0"></label><label>الطلب المطلوب (وحدة/وردية)<input id="t_dm" type="number" inputmode="decimal" min="0"></label><label>مجموع زمن العمليات (ثانية)<input id="t_wc" type="number" inputmode="decimal" min="0"></label><label>عدد المحطات الحالي<input id="t_ns" type="number" inputmode="decimal" min="0"></label><label>زمن أبطأ محطة (ثانية)<input id="t_lg" type="number" inputmode="decimal" min="0"></label></div><div id="t_r"></div></section>
+  <section id="v_c" hidden><h2>قائمة بداية الوردية</h2><p id="c_s" class="note" style="margin:0 0 12px"></p><div id="c_l"></div><button class="btn" id="c_r">إعادة تعيين اليوم</button><p class="note">المحطات والقوائم قوالب عامة لكل منتج، وتُعدَّل لتطابق خطك الفعلي.</p></section>
+</main>
+<nav class="nav" id="nav"><button data-v="d">العيوب</button><button data-v="p">Pareto</button><button data-v="i">التعليمات</button><button data-v="k">الحسابات</button><button data-v="c">القوائم</button></nav>
+<button class="fab" id="add">عيب جديد</button>
+<div class="sheet" id="sheet" hidden><div class="panel" id="panel"></div></div>
+<div class="lb" id="lb" hidden></div>
+<div class="toast" id="toast"></div>
+<div id="rep"></div>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const TY={q:'جودة',m:'عطل آلة',s:'سلامة',p:'عملية'}, SV={l:'منخفضة',m:'متوسطة',h:'حرجة'}, ST={o:'مفتوح',w:'قيد المعالجة',c:'مغلق'};
+let db=null, items=[], filter='all', pics=[], delArm=false;
+const P={
+ s:{n:'نصف آلية',st:['تجميع الهيكل','تركيب الخزانين والمحرك','تركيب لوحة التحكم','الكابلات والتوصيل','اختبار كهربائي','اختبار تسرب وأداء','التغليف']},
+ a:{n:'أوتوماتيك',st:['تجميع الهيكل','تركيب الطبل والخزان','تركيب المحرك والمضخة','الباب والصمامات','الكابلات والتوصيل','اختبار كهربائي','اختبار تسرب وأداء','التغليف']},
+ d:{n:'غسالة صحون',st:['تجميع الهيكل والخزان','تركيب المضخات والمسخن','الأذرع والأرفف','الكابلات والتوصيل','اختبار كهربائي','اختبار تسرب وتجفيف','التغليف']}
+};
+const CL={
+ all:['الأدوات وأجهزة القياس سليمة ومعايَرة','المكونات متوفرة عند كل المحطات','تعليمات العمل حاضرة ومحدَّثة','الممرات ومعدات السلامة سليمة','محطة الاختبار الكهربائي تعمل'],
+ s:['اختبار دوران الخزانين (غسيل وعصر)'],
+ a:['اختبار قفل الباب وصمامات الماء'],
+ d:['اختبار المضخة والمسخن وعدم التسرب']
+};
+let prod=(()=>{try{return localStorage.getItem('prod')||'s'}catch(e){return 's'}})(), view='d'; let ins=[], pm='s', stp=[];
+
+
+function openDB(){return new Promise((res,rej)=>{const r=indexedDB.open('defect-log',1);r.onupgradeneeded=()=>r.result.createObjectStore('items',{keyPath:'id'});r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+const store=m=>db.transaction('items',m).objectStore('items');
+function getAll(){return new Promise(res=>{const r=store('readonly').getAll();r.onsuccess=()=>res(r.result||[]);r.onerror=()=>res([])})}
+function put(it){return new Promise(res=>{if(!db)return res();try{const r=store('readwrite').put(it);r.onsuccess=r.onerror=()=>res()}catch(e){res()}})}
+function remove(id){return new Promise(res=>{if(!db)return res();try{const r=store('readwrite').delete(id);r.onsuccess=r.onerror=()=>res()}catch(e){res()}})}
+
+function fmt(ts){return new Date(ts).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'})}
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),1800)}
+function lastStation(){try{return localStorage.getItem('station')||''}catch(e){return ''}}
+
+function render(){
+  const mine=items.filter(i=>!i.pr||i.pr===prod);
+  const open=mine.filter(i=>i.st!=='c').length, crit=mine.filter(i=>i.st!=='c'&&i.sv==='h').length;
+  $('sub').textContent=mine.length?`${P[prod].n}: ${open} مفتوح، منها ${crit} حرجة`:`${P[prod].n}: لا توجد سجلات بعد`;
+  const tabs=[['all','الكل'],['o','مفتوح'],['w','قيد المعالجة'],['c','مغلق']];
+  $('chips').innerHTML=tabs.map(([k,n])=>`<button class="chip" data-f="${k}" aria-pressed="${filter===k}">${n} ${k==='all'?mine.length:mine.filter(i=>i.st===k).length}</button>`).join('');
+  const vis=mine.filter(i=>filter==='all'||i.st===filter).sort((a,b)=>b.ts-a.ts);
+  $('list').innerHTML=vis.length?vis.map(i=>`<button class="card ${i.sv} ${i.st==='c'?'c':''}" data-id="${i.id}">
+    ${i.ph&&i.ph[0]?`<img class="th" src="${i.ph[0]}" alt="">`:''}
+    <span><b>${esc(i.t)}</b><span class="meta">${i.s?`<span>${esc(i.s)}</span>`:''}<span>${TY[i.ty]}</span><span>${ST[i.st]}</span><span>${fmt(i.ts)}</span></span></span></button>`).join('')
+    :`<p class="empty">${mine.length?'لا توجد عيوب في هذه الحالة.':'اضغط على «عيب جديد» لتسجيل أول عيب مع صورة.'}</p>`;
+}
+function readFile(f){return new Promise(res=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const s=Math.min(1,1000/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',.7))};im.onerror=()=>res(null);im.src=r.result};r.onerror=()=>res(null);r.readAsDataURL(f)})}
+
+const opts=(o,sel)=>Object.entries(o).map(([k,v])=>`<option value="${k}" ${k===sel?'selected':''}>${v}</option>`).join('');
+function showSheet(html){$('panel').innerHTML=html;$('sheet').hidden=false;$('panel').scrollTop=0}
+function closeSheet(){$('sheet').hidden=true;delArm=false}
+
+function openForm(){
+  pics=[];
+  showSheet(`<h2>عيب جديد: ${P[prod].n}</h2>
+  <label>العنوان<input id="f_t" placeholder="مثال: تسريب ماء عند محطة الاختبار"></label>
+  <label>المحطة أو الموقع<input id="f_s" list="stl" value="${esc(lastStation())}"></label><datalist id="stl">${P[prod].st.map(x=>`<option value="${esc(x)}">`).join('')}</datalist>
+  <div class="row"><label>النوع<select id="f_y">${opts(TY,'q')}</select></label><label>الخطورة<select id="f_v">${opts(SV,'m')}</select></label></div>
+  <label>الوصف<textarea id="f_d" rows="3"></textarea></label>
+  <div class="photos" id="f_p"></div>
+  <label class="btn" style="margin-bottom:12px">إضافة صور<input type="file" id="f_f" accept="image/*" multiple hidden></label>
+  <div class="bar"><button class="btn p" id="save">حفظ العيب</button><button class="btn" id="cancel">إلغاء</button></div>`);
+  $('f_f').onchange=async e=>{for(const f of e.target.files){const d=await readFile(f);if(d)pics.push(d)}e.target.value='';drawPics()};
+  $('cancel').onclick=closeSheet;
+  $('save').onclick=async()=>{
+    const t=$('f_t').value.trim(); if(!t){toast('أدخل عنواناً للعيب');$('f_t').focus();return}
+    const it={id:Date.now().toString(36),t,s:$('f_s').value.trim(),ty:$('f_y').value,sv:$('f_v').value,d:$('f_d').value.trim(),st:'o',ts:Date.now(),ph:pics,pr:prod};
+    try{localStorage.setItem('station',it.s)}catch(e){}
+    items.push(it);await put(it);closeSheet();render();toast('تم حفظ العيب');
+  };
+}
+function drawPics(){$('f_p').innerHTML=pics.map((p,i)=>`<img src="${p}" alt="صورة ${i+1}" data-src="${i}">`).join('')}
+
+function openDetail(id){
+  const it=items.find(x=>x.id===id); if(!it)return; delArm=false;
+  showSheet(`<h2>${esc(it.t)}</h2>
+  <div class="meta"><span>${esc(it.s||'بدون موقع')}</span><span>${TY[it.ty]}</span><span>خطورة ${SV[it.sv]}</span><span>${fmt(it.ts)}</span></div>
+  ${it.d?`<p class="desc">${esc(it.d)}</p>`:'<p></p>'}
+  ${it.ph&&it.ph.length?`<div class="photos">${it.ph.map(p=>`<img src="${p}" alt="" data-big="1">`).join('')}</div>`:''}
+  <div class="seg">${Object.entries(ST).map(([k,v])=>`<button class="btn" data-st="${k}" aria-pressed="${it.st===k}">${v}</button>`).join('')}</div>
+  <div class="bar"><button class="btn" id="copy">نسخ التقرير</button><button class="btn d" id="del">حذف</button><button class="btn" id="close">إغلاق</button></div>`);
+  $('panel').onclick=async e=>{
+    const b=e.target.closest('[data-st]');
+    if(b){it.st=b.dataset.st;await put(it);render();openDetail(id);return}
+    if(e.target.dataset.big){$('lb').innerHTML=`<img src="${e.target.src}" alt="">`;$('lb').hidden=false}
+  };
+  $('close').onclick=closeSheet;
+  $('copy').onclick=async()=>{
+    const txt=`عيب: ${it.t}\nالموقع: ${it.s||'-'}\nالنوع: ${TY[it.ty]}\nالخطورة: ${SV[it.sv]}\nالحالة: ${ST[it.st]}\nالتاريخ: ${fmt(it.ts)}\n${it.d?'الوصف: '+it.d:''}`;
+    try{await navigator.clipboard.writeText(txt);toast('تم نسخ التقرير')}catch(e){toast('تعذر النسخ على هذا المتصفح')}
+  };
+  $('del').onclick=async()=>{
+    if(!delArm){delArm=true;$('del').textContent='اضغط مرة أخرى للتأكيد';return}
+    items=items.filter(x=>x.id!==id);await remove(id);closeSheet();render();toast('تم حذف العيب');
+  };
+}
+
+$('add').onclick=openForm;
+$('sheet').onclick=e=>{if(e.target.id==='sheet')closeSheet()};
+$('lb').onclick=()=>{$('lb').hidden=true};
+$('chips').onclick=e=>{const b=e.target.closest('[data-f]');if(b){filter=b.dataset.f;render()}};
+$('list').onclick=e=>{const c=e.target.closest('[data-id]');if(c)openDetail(c.dataset.id)};
+$('panel').addEventListener('click',e=>{if(e.target.dataset&&e.target.dataset.src!==undefined&&$('f_p')){pics.splice(+e.target.dataset.src,1);drawPics()}});
+
+
+const num=id=>parseFloat($(id).value);
+const kpi=(l,v)=>`<div class="kpi"><span>${l}</span><b>${v}</b></div>`;
+function calcO(){
+  const pl=num('o_pl'),st=num('o_st')||0,ic=num('o_ic'),tt=num('o_tt'),bd=num('o_bd')||0,r=$('o_r');
+  if(!(pl>0&&ic>0&&tt>0)){r.innerHTML='<p class="empty">أدخل الوقت المخطط وزمن الدورة وإجمالي المنتَج.</p>';return}
+  const run=pl-st;
+  if(run<=0||bd<0||bd>tt){r.innerHTML='<p class="warn">تحقق من القيم: التوقفات أو المعيب أكبر من المسموح.</p>';return}
+  const A=run/pl,Pf=ic*tt/60/run,Q=(tt-bd)/tt,pc=v=>(v*100).toFixed(1)+'%';
+  r.innerHTML=kpi('التوفر (A)',pc(A))+kpi('الأداء (P)',pc(Pf))+kpi('الجودة (Q)',pc(Q))+kpi('TRS / OEE',pc(A*Pf*Q))+(Pf>1?'<p class="warn">الأداء فوق 100%: راجع زمن الدورة المثالي أو إجمالي المنتَج.</p>':'');
+}
+function calcT(){
+  const av=num('t_av'),dm=num('t_dm'),wc=num('t_wc'),ns=num('t_ns'),lg=num('t_lg'),r=$('t_r');
+  if(!(av>0&&dm>0)){r.innerHTML='<p class="empty">أدخل الوقت المتاح والطلب المطلوب.</p>';return}
+  const tk=av*60/dm; let h=kpi('Takt time',tk.toFixed(1)+' ث');
+  if(wc>0)h+=kpi('أقل عدد محطات نظري',Math.ceil(wc/tk));
+  if(lg>0){h+=kpi('أقصى إنتاج في الوردية',Math.floor(av*60/lg));if(lg>tk)h+='<p class="warn">أبطأ محطة أطول من الـ Takt: الخط لن يحقق الطلب.</p>'}
+  if(wc>0&&ns>0&&lg>0)h+=kpi('كفاءة موازنة الخط',(wc/(ns*lg)*100).toFixed(1)+'%');
+  r.innerHTML=h;
+}
+const clKey=()=>'cl-'+prod+'-'+new Date().toISOString().slice(0,10);
+function clGet(){try{return JSON.parse(localStorage.getItem(clKey()))||[]}catch(e){return []}}
+function drawCL(){
+  const it=[...CL.all,...CL[prod]],st=clGet();
+  $('c_l').innerHTML=it.map((t,i)=>`<label class="chk"><input type="checkbox" data-i="${i}" ${st[i]?'checked':''}><span>${esc(t)}</span></label>`).join('');
+  $('c_s').textContent=`${P[prod].n}: ${it.filter((_,i)=>st[i]).length} من ${it.length} منجز اليوم`;
+}
+const VW={d:['v_d'],p:['v_p'],i:['v_i'],k:['v_o','v_t'],c:['v_c']};
+function setView(v){
+  view=v;document.querySelectorAll('main>section').forEach(e=>e.hidden=!VW[v].includes(e.id));
+  document.querySelectorAll('#nav button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===v));
+  $('add').hidden=v!=='d'; if(v==='c')drawCL(); if(v==='p')drawP(); if(v==='i')drawI(); window.scrollTo(0,0);
+}
+function setProd(p){
+  prod=p;try{localStorage.setItem('prod',p)}catch(e){}
+  document.querySelectorAll('#pick button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.p===p));
+  render(); if(view==='c')drawCL(); if(view==='p')drawP(); if(view==='i')drawI();
+}
+$('pick').onclick=e=>{const b=e.target.closest('[data-p]');if(b)setProd(b.dataset.p)};
+$('nav').onclick=e=>{const b=e.target.closest('[data-v]');if(b)setView(b.dataset.v)};
+$('c_l').onchange=e=>{const st=clGet();st[+e.target.dataset.i]=e.target.checked;try{localStorage.setItem(clKey(),JSON.stringify(st))}catch(x){}drawCL()};
+$('c_r').onclick=()=>{try{localStorage.removeItem(clKey())}catch(x){}drawCL()};
+document.addEventListener('input',e=>{if(e.target.closest('#v_o'))calcO();if(e.target.closest('#v_t'))calcT()});
+
+const dl=(n,t,m)=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+t],{type:m}));a.download=n;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000)};
+function expCSV(){
+  if(!items.length){toast('لا توجد سجلات للتصدير');return}
+  const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+  const rows=[['التاريخ','المنتج','المحطة','النوع','الخطورة','الحالة','العنوان','الوصف','عدد الصور'],...[...items].sort((a,b)=>a.ts-b.ts).map(i=>[fmt(i.ts),i.pr?P[i.pr].n:'',i.s,TY[i.ty],SV[i.sv],ST[i.st],i.t,i.d,(i.ph||[]).length])];
+  dl('defects-'+new Date().toISOString().slice(0,10)+'.csv','sep=;\r\n'+rows.map(r=>r.map(q).join(';')).join('\r\n'),'text/csv;charset=utf-8');
+  toast('تم إنشاء ملف Excel');
+}
+function printRep(h){$('rep').innerHTML=h;window.print()}
+function repDefects(){
+  const m=items.filter(i=>!i.pr||i.pr===prod).filter(i=>filter==='all'||i.st===filter).sort((a,b)=>b.ts-a.ts);
+  if(!m.length){toast('لا توجد عيوب للتقرير');return}
+  printRep(`<h1>تقرير العيوب: ${P[prod].n}</h1><p>${fmt(Date.now())}، عدد العيوب ${m.length}</p>`+m.map(i=>`<div class="ri"><h3>${esc(i.t)}</h3><p>${esc(i.s||'-')}، ${TY[i.ty]}، خطورة ${SV[i.sv]}، ${ST[i.st]}، ${fmt(i.ts)}</p>${i.d?`<p>${esc(i.d)}</p>`:''}${(i.ph||[]).map(p=>`<img src="${p}" alt="">`).join('')}</div>`).join(''));
+}
+function drawP(){
+  const m=items.filter(i=>!i.pr||i.pr===prod),key={s:i=>i.s||'بدون محطة',y:i=>TY[i.ty],v:i=>SV[i.sv]}[pm],c={};
+  document.querySelectorAll('#p_m .btn').forEach(b=>b.setAttribute('aria-pressed',b.dataset.m===pm));
+  if(!m.length){$('p_s').textContent='';$('p_r').innerHTML='<p class="empty">سجّل عيوباً أولاً لتظهر الأعمدة.</p>';return}
+  m.forEach(i=>{const k=key(i);c[k]=(c[k]||0)+1});
+  const rows=Object.entries(c).sort((a,b)=>b[1]-a[1]),mx=rows[0][1];let cum=0;
+  $('p_r').innerHTML=rows.map(([k,n])=>{const prev=cum;cum+=n;return `<div class="pr${prev/m.length<.8?' v':''}"><div class="pt"><span>${esc(k)}</span><b>${n}</b></div><div class="pb"><i style="width:${n/mx*100}%"></i></div><small>${(cum/m.length*100).toFixed(0)}% تراكمي</small></div>`}).join('');
+  $('p_s').textContent=`${P[prod].n}: ${m.length} عيب. الأعمدة الملوّنة هي الأسباب القليلة التي تشكل نحو 80% من العيوب.`;
+}
+function drawI(){
+  const m=ins.filter(x=>x.pr===prod).sort((a,b)=>b.ts-a.ts);
+  $('i_s').textContent=`${P[prod].n}: ${m.length} تعليمة`;
+  $('i_l').innerHTML=m.length?m.map(x=>{const ph=x.steps.find(t=>t.p);return `<button class="card" data-i="${x.id}">${ph?`<img class="th" src="${ph.p}" alt="">`:''}<span><b>${esc(x.t)}</b><span class="meta">${x.s?`<span>${esc(x.s)}</span>`:''}<span>مراجعة ${esc(x.rev)}</span><span>${x.steps.length} خطوات</span></span></span></button>`}).join(''):'<p class="empty">لا توجد تعليمات بعد. أضف تعليمة وخطواتها مع صور كل خطوة.</p>';
+}
+function openInsView(id){
+  const x=ins.find(v=>v.id===id);if(!x)return;delArm=false;
+  showSheet(`<h2>${esc(x.t)}</h2><div class="meta"><span>${esc(x.s||'بدون محطة')}</span><span>مراجعة ${esc(x.rev)}</span><span>${fmt(x.ts)}</span></div><div style="margin-top:14px">${x.steps.map((t,i)=>`<div class="stp"><span class="n">${i+1}</span><div><p>${esc(t.x)}</p>${t.p?`<img src="${t.p}" alt="" data-big="1">`:''}</div></div>`).join('')}</div><div class="bar"><button class="btn" id="i_pr">طباعة / PDF</button><button class="btn" id="i_ed">تعديل</button><button class="btn d" id="i_dl">حذف</button><button class="btn" id="i_cl">إغلاق</button></div>`);
+  $('panel').onclick=e=>{if(e.target.dataset.big){$('lb').innerHTML=`<img src="${e.target.src}" alt="">`;$('lb').hidden=false}};
+  $('i_cl').onclick=closeSheet;$('i_ed').onclick=()=>openInsForm(id);
+  $('i_pr').onclick=()=>printRep(`<h1>${esc(x.t)}</h1><p>${P[x.pr].n}، ${esc(x.s||'-')}، مراجعة ${esc(x.rev)}، ${fmt(x.ts)}</p>`+x.steps.map((t,i)=>`<div class="ri"><h3>${i+1}. ${esc(t.x)}</h3>${t.p?`<img src="${t.p}" alt="">`:''}</div>`).join(''));
+  $('i_dl').onclick=async()=>{if(!delArm){delArm=true;$('i_dl').textContent='اضغط مرة أخرى للتأكيد';return}ins=ins.filter(v=>v.id!==id);await remove(id);closeSheet();drawI();toast('تم حذف التعليمة')};
+}
+function drawSt(){
+  $('e_st').innerHTML=stp.map((t,i)=>`<div class="stp"><span class="n">${i+1}</span><div><textarea data-x="${i}" rows="2" placeholder="وصف الخطوة">${esc(t.x)}</textarea>${t.p?`<img src="${t.p}" alt="">`:''}<div class="bar"><label class="btn">${t.p?'تغيير الصورة':'إضافة صورة'}<input type="file" accept="image/*" data-ph="${i}" hidden></label><button class="btn d" data-r="${i}">حذف الخطوة</button></div></div></div>`).join('');
+}
+function openInsForm(id){
+  const it=ins.find(v=>v.id===id)||{t:'',s:'',rev:'A',steps:[{x:'',p:null}]};
+  stp=it.steps.map(t=>({...t}));
+  showSheet(`<h2>${id?'تعديل التعليمة':'تعليمة تجميع جديدة'}: ${P[prod].n}</h2>
+  <label>العنوان<input id="e_t" value="${esc(it.t)}"></label>
+  <div class="row"><label>المحطة<input id="e_s" list="stl2" value="${esc(it.s)}"><datalist id="stl2">${P[prod].st.map(x=>`<option value="${esc(x)}">`).join('')}</datalist></label><label>المراجعة<input id="e_r" value="${esc(it.rev)}"></label></div>
+  <div id="e_st"></div>
+  <button class="btn" id="e_add" style="width:100%;margin-bottom:12px">إضافة خطوة</button>
+  <div class="bar"><button class="btn p" id="e_sv">حفظ التعليمة</button><button class="btn" id="e_cn">إلغاء</button></div>`);
+  drawSt();
+  const st=$('e_st');
+  st.oninput=e=>{if(e.target.dataset.x!==undefined)stp[+e.target.dataset.x].x=e.target.value};
+  st.onchange=async e=>{const i=e.target.dataset.ph;if(i===undefined)return;const d=await readFile(e.target.files[0]);if(d){stp[+i].p=d;drawSt()}};
+  st.onclick=e=>{const b=e.target.closest('[data-r]');if(b){stp.splice(+b.dataset.r,1);drawSt()}};
+  $('e_add').onclick=()=>{stp.push({x:'',p:null});drawSt()};
+  $('e_cn').onclick=closeSheet;
+  $('e_sv').onclick=async()=>{
+    const t=$('e_t').value.trim(); if(!t){toast('أدخل عنوان التعليمة');return}
+    const steps=stp.filter(v=>v.x.trim()||v.p).map(v=>({x:v.x.trim(),p:v.p}));
+    if(!steps.length){toast('أضف خطوة واحدة على الأقل');return}
+    const rec={id:id||'i'+Date.now().toString(36),k:'ins',pr:it.pr||prod,t,s:$('e_s').value.trim(),rev:$('e_r').value.trim()||'A',steps,ts:Date.now()};
+    ins=id?ins.map(v=>v.id===id?rec:v):[...ins,rec];
+    await put(rec);closeSheet();drawI();toast('تم حفظ التعليمة');
+  };
+}
+$('x_c').onclick=expCSV;$('x_p').onclick=repDefects;
+$('p_m').onclick=e=>{const b=e.target.closest('[data-m]');if(b){pm=b.dataset.m;drawP()}};
+$('i_add').onclick=()=>openInsForm();
+$('i_l').onclick=e=>{const c=e.target.closest('[data-i]');if(c)openInsView(c.dataset.i)};
+calcO();calcT();setProd(prod);setView('d');
+(async()=>{try{db=await openDB();{const all=await getAll();items=all.filter(x=>!x.k);ins=all.filter(x=>x.k==='ins')}}catch(e){db=null}render();drawI();drawP()})();
+</script>
+</body>
+</html>
